@@ -1,0 +1,233 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import time
+from bs4 import BeautifulSoup
+import requests
+import csv
+from selenium.webdriver.common.action_chains import ActionChains
+import urllib
+import xlwt
+import openpyxl
+
+wb = xlwt.Workbook()
+
+wb2=openpyxl.load_workbook('Ranking_over_time.xlsx')
+sheet_1=wb2.get_sheet_by_name('Sheet1')
+last_row = len(sheet_1['A'])
+
+##############################
+row_no=0
+names=sheet_1['B']
+for x2 in names
+    if x2.value is None
+        break
+    row_no = row_no+1    
+############################## 
+    
+
+chromeOptions = webdriver.ChromeOptions()
+chromeOptions.add_experimental_option('useAutomationExtension', False)
+
+driver = webdriver.Chrome(CUsersKumarsurDesktoppythonchromedriver,chrome_options=chromeOptions, desired_capabilities=chromeOptions.to_capabilities())
+
+driver.maximize_window()
+driver.get(httpstabulator.universumglobal.comuidefault.aspx) 
+time.sleep(2)
+
+obj = driver.switch_to.alert
+time.sleep(2)
+obj.dismiss()
+
+username = driver.find_element_by_id(txtUserName)
+password = driver.find_element_by_id(txtPassword)
+username.send_keys(pantheonsurendra.kumar)
+password.send_keys(Feb@2019)
+login_attempt = driver.find_element_by_xpath(htmlbodyformtabletbodytr[2]td[2]tabletbodytr[8]tdtabletbodytrtddiva)
+login_attempt.submit()
+
+try
+    for x3 in range(2, row_no + 1)
+        country_name = sheet_1.cell(row=x3,column=2).value 
+        year  = sheet_1.cell(row=x3,column=1).value 
+        
+    ###survey searching
+
+        country = country_name
+        x_path = td[contains(text(),' + country + ')]
+        search_survey = driver.find_element_by_xpath(x_path)
+        search_survey.click()
+        time.sleep(1)        
+        
+        ########################### FRAMES ##############################
+        iframeQuestionGroups = driver.find_element_by_id('iframeQuestionGroups')
+        iframeQuestions = driver.find_element_by_id('iframeQuestions')
+        iframeAnalyze = driver.find_element_by_id('iframeAnalyze')
+        iframeCategorize = driver.find_element_by_id('iframeCategorize')
+        iframeAlternatives = driver.find_element_by_id('iframeAlternatives')
+        iframeFilter = driver.find_element_by_id('iframeFilter')
+
+        
+        ############################# Questions Group frame###########################
+        driver.switch_to.frame(iframeQuestionGroups)
+        driver.implicitly_wait(30)
+
+        if (Official Target Groups in driver.page_source)
+            driver.find_element_by_xpath(span[text() = 'Official Target Groups']).click() ##click Official Target Groups            
+        elif (Educational Profile in driver.page_source)
+            driver.find_element_by_xpath(span[text() = 'Educational Profile']).click()  ##click Educational Profile            
+
+        time.sleep(1)
+        driver.switch_to.default_content()
+
+        ############################# Alternatives frame double click to add FILTER ###########################
+        actionChains = ActionChains(driver)
+
+        driver.switch_to.frame(iframeAlternatives)
+        driver.implicitly_wait(30)
+        time.sleep(1)
+        
+        flag_1 = 
+        
+        if (Student in driver.page_source) 
+            add_filter= driver.find_element_by_xpath(option[contains(text(), 'Student')])  ##add student to filter 
+            actionChains.double_click(add_filter).perform()
+        elif (Undergraduate in driver.page_source) 
+            add_filter= driver.find_element_by_xpath(option[contains(text(), 'Undergraduate')])  ##add Undergraduate to filter
+            actionChains.double_click(add_filter).perform()         
+        else
+            flag_1 = 'not found'
+        time.sleep(3)
+        driver.switch_to.default_content()
+        
+        ############################# Questions frame ###########################
+        driver.switch_to.frame(iframeQuestions)
+        driver.implicitly_wait(30)
+        time.sleep(5)
+                
+        if year in [2019, 2018, 2017, 2016, 2015]
+            driver.find_element_by_xpath(selectoption[text() ='1. Official Target Groups (Also add a Main Field of Study to filter)']).click()
+            driver.find_element_by_xpath(selectoption[text() ='2. Main Field of Study']).click()        
+        elif year in [2014, 2013, 2012, 2011]
+            time.sleep(2)
+            driver.find_element_by_xpath(selectoption[contains(text(), 'Degree for ')]).click() 
+            driver.find_element_by_xpath(selectoption[text() ='Main Field of Study']).click() 
+            print(year)
+        
+        time.sleep(3)
+        driver.switch_to.default_content()
+        
+        ############################# Add to Categorize ###########################
+        driver.switch_to.frame(iframeCategorize)
+        driver.implicitly_wait(30)
+        time.sleep(5)
+        driver.find_element_by_xpath(a[@onclick ='parent.AddToList(document.forms[0].listCategorize);']).click()
+        time.sleep(3)
+        driver.switch_to.default_content()
+        
+        ############################# Questions Group frame ###########################
+        driver.switch_to.frame(iframeQuestionGroups)
+        driver.implicitly_wait(30)
+        driver.find_element_by_xpath(span[text() = 'Rankings']).click()        
+        time.sleep(3)
+        driver.switch_to.default_content()
+
+
+
+        ############################# Add to Analyze ###########################
+        driver.switch_to.frame(iframeAnalyze)
+        driver.implicitly_wait(30)
+        time.sleep(1)
+        driver.find_element_by_xpath(a[@onclick ='parent.AddToList(document.forms[0].listAnalyze);']).click()
+        
+        time.sleep(1)
+        driver.switch_to.default_content()
+
+
+        ############################# Get Table ###########################
+        parent_window_handle = driver.current_window_handle
+        first_window = driver.window_handles[0]
+
+        driver.find_element_by_xpath(a[@onclick ='getTable(false)']).click()        
+
+        driver.implicitly_wait(30)
+        time.sleep(20)
+
+        ############################ POPUP WINDOWs For data ###########################
+
+        handles = driver.window_handles;
+
+        driver.switch_to.window(handles[1])
+
+        ############################ aply setting HTML format in popup window ###########################
+
+        driver.implicitly_wait(30)
+        time.sleep(1)
+
+        #### Output tab
+        driver.find_element_by_xpath(em[text() = 'Output']).click()
+        driver.implicitly_wait(30)
+        time.sleep(1)
+        driver.find_element_by_xpath(select[@name='listOutput']option[text()='HTML Table']).click()
+        driver.implicitly_wait(30)
+        time.sleep(1)
+        ### General tables tab
+        driver.find_element_by_xpath(em[text() = 'General Tables']).click()
+        driver.implicitly_wait(30)
+        time.sleep(1)
+        driver.find_element_by_xpath([@id='SpanColumnPercent']label).click()
+        driver.find_element_by_xpath([@id='SpanColRank']label).click()
+        driver.implicitly_wait(30)
+        time.sleep(1)
+
+        ### Apply settings tab
+        driver.find_element_by_xpath(a[text() ='Apply Settings']).click()
+        driver.implicitly_wait(30)
+        time.sleep(1)
+
+        ###iframe for html data
+        iframes_data = driver.find_element_by_xpath(iframe[contains(@src, 'showData.aspxguid')])
+        driver.switch_to.frame(iframes_data)
+        driver.implicitly_wait(30)
+
+        res = driver.execute_script(return document.documentElement.outerHTML)
+        soup = BeautifulSoup(res, 'lxml')
+
+        ################ Put into EXcel##################
+        ws = wb.add_sheet(country)
+        table = soup.findAll('tbody')[1]  
+        rows = table.findAll(tr)
+        x = 0
+        for tr in rows
+            cols = tr.findAll(td)
+            if not cols 
+                # when we hit an empty row, we should not print anything to the workbook
+                continue
+            y = 0
+            for td in cols
+                texte_bu = td.text
+                texte_bu = texte_bu.encode('utf-8')
+                texte_bu = texte_bu.strip()
+                if x = 4
+                    ws.write(x, y, td.text)
+                elif x == 5    
+                    ws.write(x, y + 2, td.text)
+                elif x == 6    
+                    ws.write(x, y, td.text)    
+                else
+                    ws.write(x, y + 1, td.text) 
+                #print(x, y, td.text)
+                y = y + 1
+            # update the row pointer AFTER a row has been printed
+            # this avoids the blank row at the top of your table
+            x = x + 1
+
+        wb.save('rankings2.xls')
+        driver.switch_to.window(handles[0])
+        driver.find_element_by_xpath(a[@href ='chooseSurvey.aspx']).click()
+        time.sleep(3)
+
+except Exception as ex
+    print(ex)
+    driver.execute_script(alert('An Error Occured please review output information in console');)
+driver.quit()     

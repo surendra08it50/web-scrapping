@@ -1,0 +1,129 @@
+from selenium import webdriver
+import time
+from bs4 import BeautifulSoup
+import xlwt
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+import openpyxl
+import sys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
+
+wait = WebDriverWait(driver, 5)
+
+chromeOptions = webdriver.ChromeOptions()
+chromeOptions.add_experimental_option('useAutomationExtension', False)
+
+driver = webdriver.Chrome("C:\\Users\\Kumarsur\\Desktop\\python\\chromedriver",chrome_options=chromeOptions, desired_capabilities=chromeOptions.to_capabilities())
+driver.maximize_window()
+
+# state_name = "New York"
+state_names = ['New York','Delaware','Connecticut','Maine']
+programs_names = ["Engineering","Business, Management, Marketing, and Related Support Services", "Health Professions and Related Programs", "Natural Resources and Conservation", "Social Sciences", "Military Technologies and Applied Sciences", "Personal and Culinary Services", "English Language and Literature/Letters"]
+sub_programs_name = ""  
+    
+wb = xlwt.Workbook()
+for state_name in state_names:
+    x=0
+    ###################### Inputs ############
+    ws = wb.add_sheet(state_name)
+    ws.write(0, 1, "State")
+    ws.write(0, 2, "Programs")
+    ws.write(0, 3, "University")
+    ws.write(0, 4, "Type")
+    ws.write(0, 5, "Total Enrollment")
+    ws.write(0, 6, "Gender")
+    ws.write(0, 7, "Race/ethnicity")
+    ws.write(0, 8, "Age")
+    ws.write(0, 9, "Sub Programs")
+
+    for programs_name in programs_names:
+        if (programs_name == "Business, Management, Marketing, and Related Support Services"):
+            sub_programs_name = "Accounting and Related Services"  
+        elif (programs_name == "Engineering"):
+            sub_programs_name = "Computer Engineering" 
+        elif (programs_name == "Health Professions and Related Programs"):
+            sub_programs_name = "Alternative and Complementary Medicine and Medical Systems"
+        elif (programs_name == "Natural Resources and Conservation"):
+            sub_programs_name = "Forestry"
+        elif (programs_name == "Social Sciences"):
+            sub_programs_name = "Anthropology"
+        elif (programs_name == "Military Technologies and Applied Sciences"):
+            sub_programs_name = "Intelligence, Command Control and Information Operations"
+        elif (programs_name == "Personal and Culinary Services"):
+            sub_programs_name = "Funeral Service and Mortuary Science"
+        elif (programs_name == "English Language and Literature/Letters"):
+            sub_programs_name = "Literature"
+   
+        driver.get("https://nces.ed.gov/collegenavigator/") 
+        time.sleep(5)
+
+        try:
+            ############# select state ###############
+            state = "//select[@id ='ctl00_cphCollegeNavBody_ucSearchMain_ucMapMain_lstState']/option[text() ='" + state_name + "']"
+            driver.find_element_by_xpath(state).click()
+            driver.find_element_by_xpath("//select[@id ='ctl00_cphCollegeNavBody_ucSearchMain_ucMapMain_lstState']/option[text() ='No Preference']").click()
+
+            ########################### Programs/Majors ###############
+            time.sleep(5)
+            driver.find_element_by_xpath("//*[@id='BrowseWrap']/div[1]/div[1]/a/img").click()
+            time.sleep(2)
+            driver.find_element_by_xpath("//span[contains(text() , '"+programs_name+" (')]").click()
+            time.sleep(2)
+            driver.find_element_by_xpath("//span[contains(text() , '"+sub_programs_name+" (')]").click()
+            time.sleep(2)
+            Additions = driver.find_elements_by_css_selector('span.Add')
+            for addition in Additions:
+                addition.click() 
+            Additions[0].click()
+            time.sleep(5)
+            ######################## show results #############
+            driver.find_element_by_xpath("//input[@alt='show results']").click()
+            ######################### select University ################################
+            time.sleep(5)
+            Uni_all = driver.find_elements_by_css_selector('a strong')
+            count_uni = len(driver.find_elements_by_css_selector('a strong'))
+            print(count_uni)
+            # university_name = Uni_all[0].text
+            # Uni_all[0].click()
+
+            time.sleep(5)
+            flag = 0
+            for uni in range(count_uni-1):                
+                if flag >=15:
+                    break
+                Uni_all = driver.find_elements_by_css_selector('a strong')
+                university_name = Uni_all[uni].text
+                Uni_all[uni].click()
+                print(university_name)
+
+            ################################ Gender data ######################################
+                #enrolmt = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, "//a[@href ='#enrolmt']")))
+                #enrolmt.click()
+                driver.find_element_by_xpath("//a[@href ='#enrolmt']").click()
+                time.sleep(3)
+                images = driver.find_elements_by_css_selector('td img')
+
+                type_1 = driver.find_element_by_xpath("//*[@id='RightContent']/div[4]/div/div[2]/table/tbody/tr[3]/td[2]").text ####///// type data
+                total_enrollment = driver.find_element_by_xpath("//*[@id='divctl00_cphCollegeNavBody_ucInstitutionMain_ctl03']/div/table[1]/thead/tr/th[2]").text  ####/// Total enrolment data
+
+                ws.write(1+x, 1, state_name)
+                ws.write(1+x, 2, programs_name)
+                ws.write(1+x, 3, university_name)
+                ws.write(1+x, 4, type_1)
+                ws.write(1+x, 5, total_enrollment)
+                ws.write(1+x, 6, images[1].get_attribute('alt'))
+                ws.write(1+x, 7, images[2].get_attribute('alt'))
+                ws.write(1+x, 8, images[3].get_attribute('alt')) 
+                ws.write(1+x, 9, sub_programs_name)
+                x=x+1
+                flag = flag+1
+                wb.save('nces_all_3.xls')
+                driver.find_element_by_xpath("//input[@alt='show results']").click()
+                time.sleep(5)
+        except Exception as ex:
+            print(ex)        
+        #driver.quit() 
+
+
